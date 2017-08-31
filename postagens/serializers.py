@@ -44,14 +44,14 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class PostSerializerComentarios(serializers.HyperlinkedModelSerializer):
+class PostSerializerComentarios(serializers.ModelSerializer):
 
     user = serializers.SlugRelatedField(queryset=User.objects.all(),slug_field='username')
     #comentarios_do_post = CommentSerializer   #-- deixando assim resopnde a letra F
-    comentarios_do_post = serializers.SlugRelatedField(
+    comentarios_do_post = CommentSerializer(
         many=True,
-        read_only=True,
-        slug_field='body'
+        read_only=True
+
      )
 
     class Meta:

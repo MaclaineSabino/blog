@@ -47,8 +47,12 @@ class Comment(models.Model):
                              on_delete=models.CASCADE,)
 
     class Meta:
-        ordering = ('name',)
+        unique_together = ('post', 'name')
+        ordering = ['name',]
 
     def __str__(self):
         return self.name
+
+    def __unicode__(self):
+        return '%s: %s' %(self.name, self.email)
 
