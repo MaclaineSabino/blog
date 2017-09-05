@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 
@@ -14,13 +16,18 @@ class Address(models.Model):
     city = models.CharField(max_length=200)
     zipcode = models.CharField(max_length=200)
     geo = models.ForeignKey(Geo,
+                            related_name='geos',
                             on_delete=models.CASCADE)
 
-class User(models.Model):
+class Usuario(models.Model):
+
+
+    user = models.ForeignKey('auth.User')
     name = models.CharField(max_length=200)
     username = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     address = models.ForeignKey(Address,
+                                related_name='enderecos',
                                 on_delete=models.CASCADE)
 
     class Meta:
@@ -31,11 +38,18 @@ class User(models.Model):
 
 
 class Post(models.Model):
+    owner = models.ForeignKey(Usuario,
+                              related_name='postss',
+                              on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     body = models.TextField()
-    user = models.ForeignKey(User,
-                             related_name='posts',
-                             on_delete=models.CASCADE,)
+
+    def __str__(self):
+        return self.title
+
+
+
+
 
 
 class Comment(models.Model):
@@ -52,6 +66,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.name
+
 
     def __unicode__(self):
         return '%s: %s' %(self.name, self.email)

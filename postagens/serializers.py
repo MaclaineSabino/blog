@@ -1,33 +1,42 @@
 from rest_framework import serializers
 from postagens.models import *
+from django.contrib.auth.models import User
+
 
 class GeoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Geo
-        fields = ('url',
-                  'pk',
+        fields = (
                   'lat',
                   'lng')
 
 
 
+
+
 class AddressSerializer(serializers.ModelSerializer):
 
+    geo = GeoSerializer(read_only=True)
 
 
     class Meta:
         model = Address
         fields = (
-            'url',
+
             'pk',
             'street',
             'suite',
             'city',
             'zipcode',
-            'geo',
-            'users'
+            'geo'
+
+
+
         )
+
+
+
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     post = serializers.SlugRelatedField(queryset=Post.objects.all(),slug_field='title')
@@ -36,6 +45,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         model = Comment
         fields = (
             'url',
+            'pk',
             'name',
             'email',
             'body',
@@ -46,7 +56,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
 class PostSerializerComentarios(serializers.ModelSerializer):
 
-    user = serializers.SlugRelatedField(queryset=User.objects.all(),slug_field='username')
+    owner = serializers.ReadOnlyField(source='owner.username')
     #comentarios_do_post = CommentSerializer   #-- deixando assim resopnde a letra F
     comentarios_do_post = CommentSerializer(
         many=True,
@@ -60,14 +70,15 @@ class PostSerializerComentarios(serializers.ModelSerializer):
             'url',
             'title',
             'body',
-            'user',
+            'owner',
             'comentarios_do_post'
 
         )
 
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.SlugRelatedField(queryset=User.objects.all(),slug_field='name')
+    owner = serializers.ReadOnlyField(source='owner.username')
+
 
 
 
@@ -75,9 +86,10 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         model = Post
         fields = (
             'url',
+            'owner',
             'title',
             'body',
-            'user'
+
 
 
         )
@@ -85,15 +97,67 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    posts = PostSerializer
+    postss = PostSerializer
+
+    address = AddressSerializer(
+
+        read_only=True
+
+     )
 
     class Meta:
-        model = User
+        model = Usuario
         fields = (
-            'url',
+
             'pk',
             'name',
             'username',
             'email',
-            'posts',
+            'address',
+            'postss',
         )
+
+
+class UserSerializerDetail(serializers.HyperlinkedModelSerializer):
+    postss = PostSerializer
+
+    address = AddressSerializer(
+
+        read_only=True
+
+     )
+
+    class Meta:
+        model = Usuario
+        fields = (
+
+            'name',
+            'username',
+            'email',
+            'address',
+            'postss',
+        )
+
+class AddressSerializerDetail(serializers.HyperlinkedModelSerializer):
+
+    geo = GeoSerializer(read_only=True)
+
+
+
+    class Meta:
+        model = Address
+        fields = (
+
+            'pk',
+            'street',
+            'suite',
+            'city',
+            'zipcode',
+            'geo',
+
+
+
+        )
+
+
+

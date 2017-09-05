@@ -13,17 +13,31 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url,include
+from django.conf.urls import url
 from django.contrib import admin
 from postagens import views
 
 urlpatterns = [
     url(r'^users/$',
-        views.UserList.as_view(),
-        name=views.UserList.name),
+        views.UsuarioList.as_view(),
+        name=views.UsuarioList.name),
     url(r'^users/(?P<pk>[0-9]+)/$',
-        views.UserDetail.as_view(),
-        name=views.UserDetail.name),
+        views.UsuarioDetail.as_view(),
+        name=views.UsuarioDetail.name),
+
+    url(r'^address/$',
+        views.AddressList.as_view(),
+        name=views.AddressList.name),
+
+    url(r'^address/(?P<pk>[0-9]+)/$',
+        views.AddressDetail.as_view(),
+        name=views.AddressDetail.name),
+    url(r'^geo/$',
+        views.GeoList.as_view(),
+        name=views.GeoList.name),
+    url(r'^geo/(?P<pk>[0-9]+)/$',
+        views.GeoListDetail.as_view(),
+        name=views.GeoListDetail.name),
 
     url(r'^posts/$',
         views.PostList.as_view(),
@@ -39,7 +53,7 @@ urlpatterns = [
 
     url(r'^comments/(?P<pk>[0-9]+)/$',
         views.CommentDetail.as_view(),
-        name=views.CommentDetail.name),
+        name='comment-detail'),
 
     url(r'^$',
         views.ApiRoot.as_view(),
